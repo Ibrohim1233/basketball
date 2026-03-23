@@ -12,18 +12,23 @@
         #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: white; text-align: center; }
         #playerName { padding: 15px; font-size: 20px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 80%; max-width: 280px; margin-bottom: 20px; outline: none; }
         
-        /* Profil rasmini kattalashtirish */
         #playerPreview { width: 180px; height: 180px; border: 5px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 30px #ff4400; }
         
         .btn { padding: 15px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 68, 0, 0.5); }
         #playBtn { display: none; background: #28a745; }
         
-        /* Tablo rasmini kattalashtirish */
         #playerTablo { position: fixed; top: 15px; left: 15px; display: none; align-items: center; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 10px 20px; border-radius: 20px; border-left: 6px solid #ff4400; z-index: 100; }
         #tabloImg { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; margin-right: 15px; }
         
         #scoreboard { position: fixed; top: 15px; left: 55%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 8px 35px; border-radius: 15px; border-bottom: 4px solid #ff4400; display: none; gap: 25px; align-items: center; z-index: 100; }
         .value { color: #fff; font-size: 40px; line-height: 1; }
+        
+        /* Taymer stili */
+        #timerBox { display: none; text-align: center; border-left: 2px solid #555; padding-left: 20px; }
+        #timerVal { color: #ffcc00; transition: 0.3s; }
+        .low-time { color: #ff0000 !important; animation: blink 0.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
         #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; padding: 20px; }
         #questionBox { margin-top: 20px; padding: 20px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; width: 90%; max-width: 450px; display: none; }
     </style>
@@ -49,6 +54,10 @@
     <div id="scoreboard">
         <div style="text-align:center"><div style="color:#ff4400; font-size:12px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
         <div style="text-align:center"><div style="color:#ff4400; font-size:12px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
+        <div id="timerBox">
+            <div style="color:#ff4400; font-size:12px;">TIMER</div>
+            <div id="timerVal" class="value">5.0</div>
+        </div>
     </div>
 
     <div id="resultScreen">
@@ -92,9 +101,12 @@
         let score = 0, lives = 5, isGameOver = false, gameStarted = false, activeName = "";
         const gravity = 0.45;
         
-        // Savat harakati uchun o'zgaruvchilar
+        // Savat va Vaqt o'zgaruvchilari
         let hoopDirection = 1;
         let hoopSpeed = 2.5;
+        let timeLeft = 5.0;
+        let timerActive = false;
+        let lastTime = Date.now();
 
         let hoop = { x: 0, y: 0, w: 0, h: 0, rimY: 0, rimL: 0, rimR: 0, baseY: 0 };
         let ball = { x: 0, y: 0, sx: 0, sy: 0, vx: 0, vy: 0, size: 0, rotation: 0, shooting: false, dragged: false, scored: false };
@@ -139,18 +151,40 @@
             document.getElementById("scoreboard").style.display = "flex";
             document.getElementById("playerTablo").style.display = "flex";
             gameStarted = true;
+            lastTime = Date.now();
             loop();
         }
 
         function update() {
             if (!gameStarted || isGameOver) return;
 
-            // Savat harakati: 2-urinishdan keyin (lives < 4 bo'lganda)
+            let now = Date.now();
+            let dt = (now - lastTime) / 1000;
+            lastTime = now;
+
+            // Taymer boshqarish
+            if (lives < 4 && !ball.shooting && !isGameOver) {
+                timerActive = true;
+                document.getElementById("timerBox").style.display = "block";
+                timeLeft -= dt;
+                
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    handleTimeOut();
+                }
+
+                let tDisplay = document.getElementById("timerVal");
+                tDisplay.innerText = timeLeft.toFixed(1);
+                if (timeLeft <= 2) tDisplay.classList.add("low-time");
+                else tDisplay.classList.remove("low-time");
+            } else {
+                timerActive = false;
+            }
+
+            // Savat harakati
             if (lives < 4) {
                 hoop.y += hoopSpeed * hoopDirection;
-                if (hoop.y > hoop.baseY + 100 || hoop.y < hoop.baseY - 50) {
-                    hoopDirection *= -1;
-                }
+                if (hoop.y > hoop.baseY + 100 || hoop.y < hoop.baseY - 50) hoopDirection *= -1;
             }
 
             if (ball.shooting) {
@@ -171,16 +205,28 @@
 
                 if (ball.y > canvas.height + 50 || ball.x > canvas.width + 100 || ball.x < -100) {
                     if (lives <= 1) {
-                        lives = 0;
-                        document.getElementById("livesVal").innerText = 0;
-                        showResult();
+                        lives = 0; document.getElementById("livesVal").innerText = 0; showResult();
                     } else {
-                        lives--;
-                        document.getElementById("livesVal").innerText = lives;
-                        resetBall();
+                        lives--; document.getElementById("livesVal").innerText = lives; resetBall();
                     }
                 }
             }
+        }
+
+        function handleTimeOut() {
+            if (lives <= 1) {
+                lives = 0; document.getElementById("livesVal").innerText = 0; showResult();
+            } else {
+                lives--;
+                document.getElementById("livesVal").innerText = lives;
+                resetBall();
+            }
+        }
+
+        function resetBall() { 
+            ball.x = ball.sx; ball.y = ball.sy; ball.vx = 0; ball.vy = 0; 
+            ball.shooting = false; ball.dragged = false; ball.scored = false; 
+            timeLeft = 5.0; // Vaqtni qaytarish
         }
 
         function draw() {
@@ -207,11 +253,11 @@
 
         function showResult() {
             isGameOver = true;
+            document.getElementById("timerBox").style.display = "none";
             document.getElementById("resultScreen").style.display = "flex";
-            const goals = score / 3; // Har bir gol 3 ochko
+            const goals = score / 3;
             document.getElementById("resultText").innerText = `${activeName}, natijangiz: ${goals} / 5`;
             
-            // Winner sharti: 5 tadan 4 ta tushsa (4 * 3 = 12 ochko)
             if (goals >= 4) {
                 document.getElementById("resultTitle").innerText = "🏆 WINNER!";
                 document.getElementById("resultTitle").style.color = "#00ff00";
@@ -225,8 +271,6 @@
             }
         }
 
-        function resetBall() { ball.x = ball.sx; ball.y = ball.sy; ball.vx = 0; ball.vy = 0; ball.shooting = false; ball.dragged = false; ball.scored = false; }
-        
         let dragX, dragY;
         function hS(e) { if (!gameStarted || isGameOver || ball.shooting) return; let p = e.touches ? e.touches[0] : e; if (Math.hypot(p.clientX - ball.x, p.clientY - ball.y) < 100) { ball.dragged = true; dragX = p.clientX; dragY = p.clientY; } }
         function hM(e) { if (ball.dragged) { let p = e.touches ? e.touches[0] : e; dragX = p.clientX; dragY = p.clientY; } }
