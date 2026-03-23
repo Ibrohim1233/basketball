@@ -10,19 +10,17 @@
         #videoContainer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000; display: flex; justify-content: center; align-items: center; }
         #introVideo { width: 100%; height: 100%; object-fit: cover; }
         #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: white; text-align: center; }
-        #playerName { padding: 15px; font-size: 20px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 280px; margin-bottom: 20px; outline: none; }
-        #playerPreview { width: 150px; height: 150px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 20px #ff4400; }
-        .btn { padding: 15px 50px; font-size: 22px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 68, 0, 0.5); transition: 0.3s; }
+        #playerName { padding: 15px; font-size: 18px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 80%; max-width: 280px; margin-bottom: 20px; outline: none; }
+        #playerPreview { width: 120px; height: 120px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 20px #ff4400; }
+        .btn { padding: 12px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; }
         #playBtn { display: none; background: #28a745; }
-        #playerTablo { position: fixed; top: 25px; left: 25px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); padding: 10px 20px; border-radius: 20px; border-left: 6px solid #ff4400; z-index: 100; }
-        #tabloImg { width: 60px; height: 60px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-right: 15px; }
-        #tabloName { color: #fff; font-size: 18px; text-transform: uppercase; }
-        #scoreboard { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 10px 40px; border-radius: 15px; border-bottom: 4px solid #ff4400; display: none; gap: 30px; align-items: center; z-index: 100; }
-        .value { color: #fff; font-size: 45px; line-height: 1; }
+        #playerTablo { position: fixed; top: 10px; left: 10px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); padding: 5px 15px; border-radius: 15px; border-left: 4px solid #ff4400; z-index: 100; scale: 0.8; transform-origin: left top; }
+        #tabloImg { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-right: 10px; }
+        #scoreboard { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 5px 25px; border-radius: 12px; border-bottom: 3px solid #ff4400; display: none; gap: 20px; align-items: center; z-index: 100; scale: 0.9; }
+        .value { color: #fff; font-size: 30px; line-height: 1; }
         #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; padding: 20px; }
-        #questionBox { margin-top: 25px; padding: 25px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 20px; max-width: 500px; display: none; }
-        #individualQuestion { font-size: 22px; color: #fff; font-style: italic; line-height: 1.4; }
-        #retryBtn { margin-top: 30px; display: none; }
+        #questionBox { margin-top: 20px; padding: 15px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; width: 90%; max-width: 450px; display: none; }
+        #individualQuestion { font-size: 18px; color: #fff; font-style: italic; }
     </style>
 </head>
 <body>
@@ -32,7 +30,7 @@
             <source src="background.mp4" type="video/mp4">
         </video>
         <div id="introUI">
-            <h1 style="color:#ff4400; font-size: 40px;">PLAYER SELECT</h1>
+            <h2 style="color:#ff4400; margin-bottom:10px;">PLAYER SELECT</h2>
             <input type="text" id="playerName" placeholder="Ismingizni kiriting...">
             <img id="playerPreview" src="">
             <button id="checkBtn" class="btn" onclick="checkPlayer()">TEKSHIRISH</button>
@@ -42,23 +40,21 @@
 
     <div id="playerTablo">
         <img id="tabloImg" src="">
-        <div id="tabloName">PLAYER</div>
+        <div id="tabloName" style="color:#fff; font-size:14px;">PLAYER</div>
     </div>
 
     <div id="scoreboard">
-        <div style="text-align:center"><div style="color:#ff4400; font-size:11px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
-        <div style="width: 2px; height: 40px; background: rgba(255,255,255,0.2);"></div>
-        <div style="text-align:center"><div style="color:#ff4400; font-size:11px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
+        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
+        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
     </div>
 
     <div id="resultScreen">
-        <h1 id="resultTitle" style="font-size: 55px;"></h1>
-        <p id="resultText" style="font-size: 24px;"></p>
+        <h1 id="resultTitle" style="font-size: 40px; margin:0;"></h1>
+        <p id="resultText" style="font-size: 18px;"></p>
         <div id="questionBox">
-            <h3 style="color:#ff4400; margin-top:0; font-size: 14px; letter-spacing: 2px;">DIQQAT: SAVOL!</h3>
             <p id="individualQuestion"></p>
         </div>
-        <button id="retryBtn" class="btn" onclick="restartGame()">QAYTADAN BOSHLASH</button>
+        <button id="retryBtn" class="btn" style="margin-top:20px;" onclick="restartGame()">QAYTADAN BOSHLASH</button>
     </div>
     
     <canvas id="game"></canvas>
@@ -92,13 +88,23 @@
         const hoopImg = new Image(); hoopImg.src = "hoop_side.png";
 
         let score = 0, lives = 5, isGameOver = false, gameStarted = false, activeName = "";
-        const gravity = 0.45;
+        const gravity = 0.4;
 
-        video.onerror = function() { introUI.style.display = "flex"; };
-        video.onended = function() { introUI.style.display = "flex"; };
-        video.addEventListener('timeupdate', function() {
-            if (this.currentTime >= 5) { this.pause(); introUI.style.display = "flex"; }
-        });
+        let hoop = { x: 0, y: 0, width: 200, height: 150, rimY: 45, rimLeft: 30, rimRight: 165 };
+        let ball = { startX: 0, startY: 0, x: 0, y: 0, vx: 0, vy: 0, size: 65, rotation: 0, spinSpeed: 0, shooting: false, dragged: false, scored: false };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            hoop.x = canvas.width - (canvas.width * 0.4); 
+            hoop.y = canvas.height * 0.2;
+            ball.startX = canvas.width * 0.2;
+            ball.startY = canvas.height * 0.7;
+            if(!ball.shooting) { ball.x = ball.startX; ball.y = ball.startY; }
+        }
+        window.onresize = resize; resize();
+
+        video.addEventListener('timeupdate', function() { if (this.currentTime >= 5) { this.pause(); introUI.style.display = "flex"; } });
 
         function checkPlayer() {
             const name = playerNameInput.value.trim();
@@ -113,7 +119,7 @@
                     document.getElementById("tabloImg").src = foundKey + ".jpg";
                     document.getElementById("tabloName").innerText = foundKey;
                 };
-            } else { alert("Bu ism ro'yxatda yo'q!"); }
+            } else { alert("Ism topilmadi!"); }
         }
 
         function startGame() {
@@ -123,29 +129,15 @@
             gameStarted = true;
         }
 
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.onresize = resize; resize();
-
-        let hoop = { x: window.innerWidth - 350, y: window.innerHeight * 0.18, width: 260, height: 200, rimY: 61, rimLeft: 38, rimRight: 215 };
-        let ball = { startX: 250, startY: (window.innerHeight * 0.75) - 38, x: 250, y: (window.innerHeight * 0.75) - 38, vx: 0, vy: 0, size: 83, rotation: 0, spinSpeed: 0, shooting: false, dragged: false, scored: false };
-
         function update() {
             if (!gameStarted || isGameOver) return;
             if (ball.shooting) {
                 ball.x += ball.vx; ball.y += ball.vy; ball.vy += gravity; ball.rotation += ball.spinSpeed;
                 let absRimY = hoop.y + hoop.rimY, absRimL = hoop.x + hoop.rimLeft, absRimR = hoop.x + hoop.rimRight;
-                [absRimL, absRimR].forEach(rx => {
-                    let dist = Math.hypot(ball.x - rx, ball.y - absRimY);
-                    if (dist < ball.size / 2) {
-                        let angle = Math.atan2(ball.y - absRimY, ball.x - rx);
-                        let speed = Math.sqrt(ball.vx**2 + ball.vy**2) * 0.75;
-                        ball.vx = Math.cos(angle) * speed; ball.vy = Math.sin(angle) * speed;
-                    }
-                });
-                if (!ball.scored && ball.vy > 0 && ball.x > absRimL && ball.x < absRimR && Math.abs(ball.y - absRimY) < 20) {
+                if (!ball.scored && ball.vy > 0 && ball.x > absRimL && ball.x < absRimR && Math.abs(ball.y - absRimY) < 15) {
                     score += 3; document.getElementById("scoreVal").innerText = score; ball.scored = true;
                 }
-                if (ball.y > canvas.height + 100 || ball.x > canvas.width + 150 || ball.x < -150) {
+                if (ball.y > canvas.height + 50 || ball.x > canvas.width + 50 || ball.x < -50) {
                     if (lives <= 0) showResult(); else resetBall();
                 }
             }
@@ -157,16 +149,8 @@
             ctx.drawImage(hoopImg, hoop.x, hoop.y, hoop.width, hoop.height);
             if (!gameStarted) return;
             if (ball.dragged) {
-                let tVX = (ball.startX - dragX) * 0.12, tVY = (ball.startY - dragY) * 0.12, tx = ball.startX, ty = ball.startY, tvy = tVY;
-                for (let i = 0; i < 43; i++) {
-                    if (i % 2 === 0) {
-                        let miniSize = 25 - (i * 0.4);
-                        ctx.save(); ctx.globalAlpha = Math.max(0, 0.9 - (i/43));
-                        ctx.drawImage(ballImg, tx - miniSize/2, ty - miniSize/2, miniSize, miniSize);
-                        ctx.restore();
-                    }
-                    tx += tVX * 1.7; ty += tvy * 1.7; tvy += gravity * 1.7;
-                }
+                ctx.beginPath(); ctx.setLineDash([5, 5]); ctx.moveTo(ball.startX, ball.startY); ctx.lineTo(dragX, dragY);
+                ctx.strokeStyle = "rgba(255,68,0,0.5)"; ctx.stroke();
             }
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.rotation);
             ctx.drawImage(ballImg, -ball.size/2, -ball.size/2, ball.size, ball.size);
@@ -176,34 +160,30 @@
         function showResult() {
             isGameOver = true;
             const goals = Math.floor(score / 3);
-            const resultScreen = document.getElementById("resultScreen");
-            const qBox = document.getElementById("questionBox");
-            const retryBtn = document.getElementById("retryBtn");
-            
-            resultScreen.style.display = "flex";
+            document.getElementById("resultScreen").style.display = "flex";
             document.getElementById("resultText").innerText = `${activeName}, natijangiz: ${goals} / 5`;
-
+            const qBox = document.getElementById("questionBox");
+            const btn = document.getElementById("retryBtn");
             if (goals >= 3) {
                 document.getElementById("resultTitle").innerText = "🏆 WINNER!";
                 document.getElementById("resultTitle").style.color = "#00ff00";
-                qBox.style.display = "none";
-                retryBtn.style.display = "block";
+                qBox.style.display = "none"; btn.style.display = "block";
             } else {
                 document.getElementById("resultTitle").innerText = "🏀 GAME OVER";
                 document.getElementById("resultTitle").style.color = "#ff0000";
                 qBox.style.display = "block";
                 document.getElementById("individualQuestion").innerText = questionsMap[activeName];
-                retryBtn.style.display = "none";
+                btn.style.display = "none"; // MAG'LUBIYATDA TUGMA YO'Q
             }
         }
 
-        function resetBall() { ball.x = ball.startX; ball.y = ball.startY; ball.vx = 0; ball.vy = 0; ball.rotation = 0; ball.spinSpeed = 0; ball.shooting = false; ball.dragged = false; ball.scored = false; }
+        function resetBall() { ball.x = ball.startX; ball.y = ball.startY; ball.vx = 0; ball.vy = 0; ball.shooting = false; ball.dragged = false; ball.scored = false; }
         function restartGame() { score = 0; lives = 5; isGameOver = false; document.getElementById("scoreVal").innerText = "0"; document.getElementById("livesVal").innerText = "5"; document.getElementById("resultScreen").style.display = "none"; resetBall(); }
 
         let dragX, dragY;
-        function hS(e) { if (!gameStarted || isGameOver || lives <= 0) return; let p = e.touches ? e.touches[0] : e; if (Math.hypot(p.clientX - ball.x, p.clientY - ball.y) < 100) { ball.dragged = true; dragX = p.clientX; dragY = p.clientY; } }
+        function hS(e) { if (!gameStarted || isGameOver) return; let p = e.touches ? e.touches[0] : e; ball.dragged = true; dragX = p.clientX; dragY = p.clientY; }
         function hM(e) { if (ball.dragged) { let p = e.touches ? e.touches[0] : e; dragX = p.clientX; dragY = p.clientY; } }
-        function hE() { if (ball.dragged) { lives--; document.getElementById("livesVal").innerText = lives; ball.vx = (ball.startX - dragX) * 0.12; ball.vy = (ball.startY - dragY) * 0.12; ball.spinSpeed = ball.vx * 0.1; ball.shooting = true; ball.dragged = false; } }
+        function hE() { if (ball.dragged) { lives--; document.getElementById("livesVal").innerText = lives; ball.vx = (ball.startX - dragX) * 0.1; ball.vy = (ball.startY - dragY) * 0.1; ball.shooting = true; ball.dragged = false; } }
 
         canvas.addEventListener("mousedown", hS); window.addEventListener("mousemove", hM); window.addEventListener("mouseup", hE);
         canvas.addEventListener("touchstart", hS); window.addEventListener("touchmove", hM); window.addEventListener("touchend", hE);
