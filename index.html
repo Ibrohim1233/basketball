@@ -11,13 +11,19 @@
         #introVideo { width: 100%; height: 100%; object-fit: cover; }
         #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: white; text-align: center; }
         #playerName { padding: 15px; font-size: 20px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 80%; max-width: 280px; margin-bottom: 20px; outline: none; }
-        #playerPreview { width: 120px; height: 120px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 20px #ff4400; }
+        
+        /* Profil rasmini kattalashtirish */
+        #playerPreview { width: 180px; height: 180px; border: 5px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 30px #ff4400; }
+        
         .btn { padding: 15px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 68, 0, 0.5); }
         #playBtn { display: none; background: #28a745; }
-        #playerTablo { position: fixed; top: 10px; left: 10px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); padding: 5px 15px; border-radius: 15px; border-left: 4px solid #ff4400; z-index: 100; scale: 0.8; transform-origin: left top; }
-        #tabloImg { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-right: 10px; }
-        #scoreboard { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 5px 30px; border-radius: 12px; border-bottom: 3px solid #ff4400; display: none; gap: 20px; align-items: center; z-index: 100; scale: 0.8; }
-        .value { color: #fff; font-size: 35px; line-height: 1; }
+        
+        /* Tablo rasmini kattalashtirish */
+        #playerTablo { position: fixed; top: 15px; left: 15px; display: none; align-items: center; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 10px 20px; border-radius: 20px; border-left: 6px solid #ff4400; z-index: 100; }
+        #tabloImg { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; margin-right: 15px; }
+        
+        #scoreboard { position: fixed; top: 15px; left: 55%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 8px 35px; border-radius: 15px; border-bottom: 4px solid #ff4400; display: none; gap: 25px; align-items: center; z-index: 100; }
+        .value { color: #fff; font-size: 40px; line-height: 1; }
         #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; padding: 20px; }
         #questionBox { margin-top: 20px; padding: 20px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; width: 90%; max-width: 450px; display: none; }
     </style>
@@ -27,7 +33,7 @@
     <div id="videoContainer">
         <video id="introVideo" autoplay muted playsinline><source src="background.mp4" type="video/mp4"></video>
         <div id="introUI">
-            <h2 style="color:#ff4400;">PLAYER SELECT</h2>
+            <h2 style="color:#ff4400; font-size: 35px;">PLAYER SELECT</h2>
             <input type="text" id="playerName" placeholder="Ismingizni kiriting...">
             <img id="playerPreview" src="">
             <button id="checkBtn" class="btn" onclick="checkPlayer()">TEKSHIRISH</button>
@@ -37,21 +43,22 @@
 
     <div id="playerTablo">
         <img id="tabloImg" src="">
-        <div id="tabloName" style="color:white; font-size:14px;">PLAYER</div>
+        <div id="tabloName" style="color:white; font-size:18px; text-transform: uppercase;">PLAYER</div>
     </div>
 
     <div id="scoreboard">
-        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
-        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
+        <div style="text-align:center"><div style="color:#ff4400; font-size:12px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
+        <div style="text-align:center"><div style="color:#ff4400; font-size:12px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
     </div>
 
     <div id="resultScreen">
-        <h1 id="resultTitle" style="font-size: 40px; margin:0;"></h1>
-        <p id="resultText" style="font-size: 20px;"></p>
+        <h1 id="resultTitle" style="font-size: 50px; margin:0;"></h1>
+        <p id="resultText" style="font-size: 24px;"></p>
         <div id="questionBox">
-            <p id="individualQuestion"></p>
+            <h3 style="color:#ff4400; margin:0;">DIQQAT: SAVOL!</h3>
+            <p id="individualQuestion" style="font-style: italic; font-size: 20px;"></p>
         </div>
-        <button id="retryBtn" class="btn" onclick="location.reload()">QAYTADAN</button>
+        <button id="retryBtn" class="btn" style="margin-top:20px;" onclick="location.reload()">QAYTADAN BOSHLASH</button>
     </div>
     
     <canvas id="game"></canvas>
@@ -84,26 +91,25 @@
 
         let score = 0, lives = 5, isGameOver = false, gameStarted = false, activeName = "";
         const gravity = 0.45;
+        
+        // Savat harakati uchun o'zgaruvchilar
+        let hoopDirection = 1;
+        let hoopSpeed = 2.5;
 
-        // Obyektlar o'lchami (foizda)
-        let hoop = { x: 0, y: 0, w: 0, h: 0, rimY: 0, rimL: 0, rimR: 0 };
+        let hoop = { x: 0, y: 0, w: 0, h: 0, rimY: 0, rimL: 0, rimR: 0, baseY: 0 };
         let ball = { x: 0, y: 0, sx: 0, sy: 0, vx: 0, vy: 0, size: 0, rotation: 0, shooting: false, dragged: false, scored: false };
 
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
-            // Savatni ekran kengligiga moslash
-            hoop.w = canvas.width * 0.35;
-            if(hoop.w > 260) hoop.w = 260; 
+            hoop.w = Math.min(canvas.width * 0.35, 260);
             hoop.h = hoop.w * 0.77;
             hoop.x = canvas.width - hoop.w - (canvas.width * 0.05);
-            hoop.y = canvas.height * 0.18;
+            hoop.baseY = canvas.height * 0.18;
+            hoop.y = hoop.baseY;
             hoop.rimY = hoop.h * 0.3;
             hoop.rimL = hoop.w * 0.15;
             hoop.rimR = hoop.w * 0.85;
-
-            // Koptokni ekran kengligiga moslash
             ball.size = hoop.w * 0.32;
             ball.sx = canvas.width * 0.15;
             ball.sy = canvas.height * 0.75;
@@ -138,11 +144,19 @@
 
         function update() {
             if (!gameStarted || isGameOver) return;
+
+            // Savat harakati: 2-urinishdan keyin (lives < 4 bo'lganda)
+            if (lives < 4) {
+                hoop.y += hoopSpeed * hoopDirection;
+                if (hoop.y > hoop.baseY + 100 || hoop.y < hoop.baseY - 50) {
+                    hoopDirection *= -1;
+                }
+            }
+
             if (ball.shooting) {
                 ball.x += ball.vx; ball.y += ball.vy; ball.vy += gravity; ball.rotation += ball.vx * 0.05;
                 let rY = hoop.y + hoop.rimY, rL = hoop.x + hoop.rimL, rR = hoop.x + hoop.rimR;
                 
-                // Halqa cheti bilan to'qnashuv
                 [rL, rR].forEach(rx => {
                     let d = Math.hypot(ball.x - rx, ball.y - rY);
                     if (d < ball.size/2) {
@@ -151,12 +165,20 @@
                     }
                 });
 
-                if (!ball.scored && ball.vy > 0 && ball.x > rL && ball.x < rR && Math.abs(ball.y - rY) < 15) {
+                if (!ball.scored && ball.vy > 0 && ball.x > rL && ball.x < rR && Math.abs(ball.y - rY) < 20) {
                     score += 3; document.getElementById("scoreVal").innerText = score; ball.scored = true;
                 }
 
-                if (ball.y > canvas.height + 50 || ball.x > canvas.width + 50 || ball.x < -50) {
-                    if (lives <= 1) showResult(); else { lives--; document.getElementById("livesVal").innerText = lives; resetBall(); }
+                if (ball.y > canvas.height + 50 || ball.x > canvas.width + 100 || ball.x < -100) {
+                    if (lives <= 1) {
+                        lives = 0;
+                        document.getElementById("livesVal").innerText = 0;
+                        showResult();
+                    } else {
+                        lives--;
+                        document.getElementById("livesVal").innerText = lives;
+                        resetBall();
+                    }
                 }
             }
         }
@@ -186,11 +208,14 @@
         function showResult() {
             isGameOver = true;
             document.getElementById("resultScreen").style.display = "flex";
-            const goals = Math.floor(score / 3);
-            document.getElementById("resultText").innerText = `${activeName}, ball: ${score}`;
-            if (goals >= 3) {
+            const goals = score / 3; // Har bir gol 3 ochko
+            document.getElementById("resultText").innerText = `${activeName}, natijangiz: ${goals} / 5`;
+            
+            // Winner sharti: 5 tadan 4 ta tushsa (4 * 3 = 12 ochko)
+            if (goals >= 4) {
                 document.getElementById("resultTitle").innerText = "🏆 WINNER!";
                 document.getElementById("resultTitle").style.color = "#00ff00";
+                document.getElementById("questionBox").style.display = "none";
             } else {
                 document.getElementById("resultTitle").innerText = "🏀 GAME OVER";
                 document.getElementById("resultTitle").style.color = "#ff0000";
