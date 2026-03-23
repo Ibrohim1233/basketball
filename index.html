@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Basketball Memory Challenge</title>
+    <title>Street Basketball - Memory Challenge</title>
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; user-select: none; }
-        canvas { display: block; touch-action: none; }
+        canvas { display: block; touch-action: none; width: 100vw; height: 100vh; }
         #videoContainer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000; display: flex; justify-content: center; align-items: center; }
         #introVideo { width: 100%; height: 100%; object-fit: cover; }
         #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: white; text-align: center; }
-        #playerName { padding: 15px; font-size: 18px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 250px; margin-bottom: 20px; outline: none; }
-        #playerPreview { width: 120px; height: 120px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; }
-        .btn { padding: 12px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; }
+        #playerName { padding: 15px; font-size: 20px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 80%; max-width: 280px; margin-bottom: 20px; outline: none; }
+        #playerPreview { width: 120px; height: 120px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; box-shadow: 0 0 20px #ff4400; }
+        .btn { padding: 15px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(255, 68, 0, 0.5); }
         #playBtn { display: none; background: #28a745; }
-        #playerTablo { position: fixed; top: 15px; left: 15px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 15px; border-left: 4px solid #ff4400; z-index: 100; scale: 0.8; transform-origin: left top; }
+        #playerTablo { position: fixed; top: 10px; left: 10px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); padding: 5px 15px; border-radius: 15px; border-left: 4px solid #ff4400; z-index: 100; scale: 0.8; transform-origin: left top; }
         #tabloImg { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-right: 10px; }
-        #scoreboard { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 5px 25px; border-radius: 12px; border-bottom: 3px solid #ff4400; display: none; gap: 20px; align-items: center; z-index: 100; scale: 0.9; }
+        #scoreboard { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 5px 30px; border-radius: 12px; border-bottom: 3px solid #ff4400; display: none; gap: 20px; align-items: center; z-index: 100; scale: 0.8; }
         .value { color: #fff; font-size: 35px; line-height: 1; }
         #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; padding: 20px; }
-        #questionBox { margin-top: 20px; padding: 20px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; max-width: 400px; display: none; }
+        #questionBox { margin-top: 20px; padding: 20px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; width: 90%; max-width: 450px; display: none; }
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
         <div id="introUI">
             <h2 style="color:#ff4400;">PLAYER SELECT</h2>
             <input type="text" id="playerName" placeholder="Ismingizni kiriting...">
-            <img id="playerPreview">
+            <img id="playerPreview" src="">
             <button id="checkBtn" class="btn" onclick="checkPlayer()">TEKSHIRISH</button>
             <button id="playBtn" class="btn" onclick="startGame()">START GAME</button>
         </div>
@@ -37,23 +37,21 @@
 
     <div id="playerTablo">
         <img id="tabloImg" src="">
-        <div id="tabloName" style="color:#fff; font-size:16px;">PLAYER</div>
+        <div id="tabloName" style="color:white; font-size:14px;">PLAYER</div>
     </div>
 
     <div id="scoreboard">
         <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
-        <div style="width: 2px; height: 30px; background: rgba(255,255,255,0.2);"></div>
         <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
     </div>
 
     <div id="resultScreen">
-        <h1 id="resultTitle" style="font-size: 45px; margin:0;"></h1>
+        <h1 id="resultTitle" style="font-size: 40px; margin:0;"></h1>
         <p id="resultText" style="font-size: 20px;"></p>
         <div id="questionBox">
-            <h3 style="color:#ff4400; margin:0; font-size:12px;">DIQQAT SAVOL!</h3>
             <p id="individualQuestion"></p>
         </div>
-        <button id="retryBtn" class="btn" style="margin-top:20px;" onclick="restartGame()">QAYTADAN BOSHLASH</button>
+        <button id="retryBtn" class="btn" onclick="location.reload()">QAYTADAN</button>
     </div>
     
     <canvas id="game"></canvas>
@@ -87,7 +85,7 @@
         let score = 0, lives = 5, isGameOver = false, gameStarted = false, activeName = "";
         const gravity = 0.45;
 
-        // Obyektlarni foizda belgilaymiz (Mobil uchun muhim)
+        // Obyektlar o'lchami (foizda)
         let hoop = { x: 0, y: 0, w: 0, h: 0, rimY: 0, rimL: 0, rimR: 0 };
         let ball = { x: 0, y: 0, sx: 0, sy: 0, vx: 0, vy: 0, size: 0, rotation: 0, shooting: false, dragged: false, scored: false };
 
@@ -95,41 +93,39 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // Savat o'lchami va joyi (Mobilga mos)
-            hoop.w = canvas.width > 600 ? 250 : canvas.width * 0.45;
+            // Savatni ekran kengligiga moslash
+            hoop.w = canvas.width * 0.35;
+            if(hoop.w > 260) hoop.w = 260; 
             hoop.h = hoop.w * 0.77;
-            hoop.x = canvas.width - hoop.w - 20;
-            hoop.y = canvas.height * 0.15;
+            hoop.x = canvas.width - hoop.w - (canvas.width * 0.05);
+            hoop.y = canvas.height * 0.18;
             hoop.rimY = hoop.h * 0.3;
             hoop.rimL = hoop.w * 0.15;
-            hoop.rimR = hoop.w * 0.82;
+            hoop.rimR = hoop.w * 0.85;
 
-            // Koptok o'lchami va joyi
-            ball.size = hoop.w * 0.35;
-            ball.sx = canvas.width * 0.2;
+            // Koptokni ekran kengligiga moslash
+            ball.size = hoop.w * 0.32;
+            ball.sx = canvas.width * 0.15;
             ball.sy = canvas.height * 0.75;
             if(!ball.shooting) { ball.x = ball.sx; ball.y = ball.sy; }
         }
         window.onresize = resize; resize();
 
         video.onended = () => { introUI.style.display = "flex"; };
-        setTimeout(() => { if(!gameStarted) introUI.style.display = "flex"; }, 5000);
+        video.addEventListener('timeupdate', function() { if (this.currentTime >= 5) { this.pause(); introUI.style.display = "flex"; } });
 
         function checkPlayer() {
             const name = document.getElementById("playerName").value.trim();
-            const found = Object.keys(questionsMap).find(k => k.toLowerCase() === name.toLowerCase());
-            if (found) {
-                activeName = found;
-                const prev = document.getElementById("playerPreview");
-                prev.src = found + ".jpg";
-                prev.onload = () => {
-                    prev.style.display = "block";
-                    document.getElementById("checkBtn").style.display = "none";
-                    document.getElementById("playBtn").style.display = "block";
-                    document.getElementById("tabloImg").src = found + ".jpg";
-                    document.getElementById("tabloName").innerText = found;
-                };
-            } else { alert("Ism ro'yxatda yo'q!"); }
+            const foundKey = Object.keys(questionsMap).find(k => k.toLowerCase() === name.toLowerCase());
+            if (foundKey) {
+                activeName = foundKey;
+                document.getElementById("playerPreview").src = foundKey + ".jpg";
+                document.getElementById("playerPreview").style.display = "block";
+                document.getElementById("checkBtn").style.display = "none";
+                document.getElementById("playBtn").style.display = "block";
+                document.getElementById("tabloImg").src = foundKey + ".jpg";
+                document.getElementById("tabloName").innerText = foundKey;
+            } else { alert("Ism topilmadi!"); }
         }
 
         function startGame() {
@@ -137,16 +133,16 @@
             document.getElementById("scoreboard").style.display = "flex";
             document.getElementById("playerTablo").style.display = "flex";
             gameStarted = true;
+            loop();
         }
 
         function update() {
             if (!gameStarted || isGameOver) return;
             if (ball.shooting) {
                 ball.x += ball.vx; ball.y += ball.vy; ball.vy += gravity; ball.rotation += ball.vx * 0.05;
-                
                 let rY = hoop.y + hoop.rimY, rL = hoop.x + hoop.rimL, rR = hoop.x + hoop.rimR;
                 
-                // Halqaga tegish (Fizika)
+                // Halqa cheti bilan to'qnashuv
                 [rL, rR].forEach(rx => {
                     let d = Math.hypot(ball.x - rx, ball.y - rY);
                     if (d < ball.size/2) {
@@ -155,14 +151,12 @@
                     }
                 });
 
-                // GOL!
                 if (!ball.scored && ball.vy > 0 && ball.x > rL && ball.x < rR && Math.abs(ball.y - rY) < 15) {
                     score += 3; document.getElementById("scoreVal").innerText = score; ball.scored = true;
                 }
 
                 if (ball.y > canvas.height + 50 || ball.x > canvas.width + 50 || ball.x < -50) {
-                    if (lives <= 1) { lives = 0; document.getElementById("livesVal").innerText = 0; showResult(); } 
-                    else { lives--; document.getElementById("livesVal").innerText = lives; resetBall(); }
+                    if (lives <= 1) showResult(); else { lives--; document.getElementById("livesVal").innerText = lives; resetBall(); }
                 }
             }
         }
@@ -172,12 +166,8 @@
             ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
             ctx.drawImage(hoopImg, hoop.x, hoop.y, hoop.w, hoop.h);
             
-            if (!gameStarted) return;
-
-            // --- MINI BALLS ANIMATION (TRAYEKTORIYA) ---
             if (ball.dragged) {
-                let tVX = (ball.sx - dragX) * 0.12, tVY = (ball.sy - dragY) * 0.12;
-                let tx = ball.sx, ty = ball.sy, tvy = tVY;
+                let tVX = (ball.sx - dragX) * 0.12, tVY = (ball.sy - dragY) * 0.12, tx = ball.sx, ty = ball.sy, tvy = tVY;
                 for (let i = 0; i < 35; i++) {
                     if (i % 3 === 0) {
                         let ms = ball.size * 0.3 * (1 - i/35);
@@ -188,7 +178,6 @@
                     tx += tVX * 1.8; ty += tvy * 1.8; tvy += gravity * 1.8;
                 }
             }
-
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.rotation);
             ctx.drawImage(ballImg, -ball.size/2, -ball.size/2, ball.size, ball.size);
             ctx.restore();
@@ -196,26 +185,23 @@
 
         function showResult() {
             isGameOver = true;
-            const goals = Math.floor(score / 3);
             document.getElementById("resultScreen").style.display = "flex";
-            document.getElementById("resultText").innerText = `${activeName}, natijangiz: ${goals} / 5`;
-            const qBox = document.getElementById("questionBox");
+            const goals = Math.floor(score / 3);
+            document.getElementById("resultText").innerText = `${activeName}, ball: ${score}`;
             if (goals >= 3) {
                 document.getElementById("resultTitle").innerText = "🏆 WINNER!";
                 document.getElementById("resultTitle").style.color = "#00ff00";
-                qBox.style.display = "none";
             } else {
                 document.getElementById("resultTitle").innerText = "🏀 GAME OVER";
                 document.getElementById("resultTitle").style.color = "#ff0000";
-                qBox.style.display = "block";
+                document.getElementById("questionBox").style.display = "block";
                 document.getElementById("individualQuestion").innerText = questionsMap[activeName];
                 document.getElementById("retryBtn").style.display = "none";
             }
         }
 
         function resetBall() { ball.x = ball.sx; ball.y = ball.sy; ball.vx = 0; ball.vy = 0; ball.shooting = false; ball.dragged = false; ball.scored = false; }
-        function restartGame() { location.reload(); }
-
+        
         let dragX, dragY;
         function hS(e) { if (!gameStarted || isGameOver || ball.shooting) return; let p = e.touches ? e.touches[0] : e; if (Math.hypot(p.clientX - ball.x, p.clientY - ball.y) < 100) { ball.dragged = true; dragX = p.clientX; dragY = p.clientY; } }
         function hM(e) { if (ball.dragged) { let p = e.touches ? e.touches[0] : e; dragX = p.clientX; dragY = p.clientY; } }
@@ -224,8 +210,8 @@
         canvas.addEventListener("mousedown", hS); window.addEventListener("mousemove", hM); window.addEventListener("mouseup", hE);
         canvas.addEventListener("touchstart", hS); window.addEventListener("touchmove", hM); window.addEventListener("touchend", hE);
 
-        function loop() { update(); draw(); requestAnimationFrame(loop); }
-        bg.onload = loop;
+        function loop() { update(); draw(); if(!isGameOver) requestAnimationFrame(loop); }
+        bg.onload = () => { if(!gameStarted) draw(); };
     </script>
 </body>
 </html>
