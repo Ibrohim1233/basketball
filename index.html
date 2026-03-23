@@ -3,143 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Street Basketball Mobile</title>
+    <title>Basketball Memory Challenge</title>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; user-select: none; }
-        canvas { display: block; touch-action: none; width: 100vw; height: 100vh; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; user-select: none; }
+        canvas { display: block; touch-action: none; }
         #videoContainer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 500; background: #000; display: flex; justify-content: center; align-items: center; }
         #introVideo { width: 100%; height: 100%; object-fit: cover; }
-        #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.8); color: white; }
-        .btn { padding: 15px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; margin-top: 10px; }
-        #playerName { padding: 12px; border-radius: 10px; border: 2px solid #ff4400; margin-bottom: 10px; width: 250px; text-align: center; }
-        #scoreboard { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); display: none; background: rgba(0,0,0,0.7); padding: 10px 30px; border-radius: 15px; z-index: 100; color: white; gap: 20px; }
-        #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; }
+        #introUI { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.85); color: white; text-align: center; }
+        #playerName { padding: 15px; font-size: 18px; border: 3px solid #ff4400; border-radius: 12px; background: #111; color: #fff; text-align: center; width: 250px; margin-bottom: 20px; outline: none; }
+        #playerPreview { width: 120px; height: 120px; border: 4px solid #ff4400; border-radius: 50%; margin-bottom: 20px; display: none; object-fit: cover; }
+        .btn { padding: 12px 40px; font-size: 20px; background: #ff4400; color: white; border: none; border-radius: 50px; cursor: pointer; }
+        #playBtn { display: none; background: #28a745; }
+        #playerTablo { position: fixed; top: 15px; left: 15px; display: none; align-items: center; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 15px; border-left: 4px solid #ff4400; z-index: 100; scale: 0.8; transform-origin: left top; }
+        #tabloImg { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-right: 10px; }
+        #scoreboard { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); padding: 5px 25px; border-radius: 12px; border-bottom: 3px solid #ff4400; display: none; gap: 20px; align-items: center; z-index: 100; scale: 0.9; }
+        .value { color: #fff; font-size: 35px; line-height: 1; }
+        #resultScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 600; text-align: center; padding: 20px; }
+        #questionBox { margin-top: 20px; padding: 20px; background: #1a1a1a; border: 2px dashed #ff4400; border-radius: 15px; max-width: 400px; display: none; }
     </style>
 </head>
 <body>
 
-<div id="videoContainer">
-    <video id="introVideo" autoplay muted playsinline><source src="background.mp4" type="video/mp4"></video>
-    <div id="introUI">
-        <input type="text" id="playerName" placeholder="Ismingizni kiriting...">
-        <button id="checkBtn" class="btn" onclick="checkPlayer()">TEKSHIRISH</button>
-        <button id="playBtn" class="btn" style="display:none;" onclick="startGame()">START GAME</button>
+    <div id="videoContainer">
+        <video id="introVideo" autoplay muted playsinline><source src="background.mp4" type="video/mp4"></video>
+        <div id="introUI">
+            <h2 style="color:#ff4400;">PLAYER SELECT</h2>
+            <input type="text" id="playerName" placeholder="Ismingizni kiriting...">
+            <img id="playerPreview">
+            <button id="checkBtn" class="btn" onclick="checkPlayer()">TEKSHIRISH</button>
+            <button id="playBtn" class="btn" onclick="startGame()">START GAME</button>
+        </div>
     </div>
-</div>
 
-<div id="scoreboard">
-    <div>POINTS: <span id="scoreVal">0</span></div>
-    <div>SHOTS: <span id="livesVal">5</span></div>
-</div>
-
-<div id="resultScreen">
-    <h1 id="resultTitle"></h1>
-    <p id="resultText"></p>
-    <div id="questionBox" style="margin: 20px; padding: 15px; border: 1px dashed #ff4400;">
-        <p id="individualQuestion"></p>
+    <div id="playerTablo">
+        <img id="tabloImg" src="">
+        <div id="tabloName" style="color:#fff; font-size:16px;">PLAYER</div>
     </div>
-    <button id="retryBtn" class="btn" onclick="location.reload()">QAYTADAN</button>
-</div>
 
-<canvas id="game"></canvas>
+    <div id="scoreboard">
+        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">POINTS</div><div id="scoreVal" class="value">0</div></div>
+        <div style="width: 2px; height: 30px; background: rgba(255,255,255,0.2);"></div>
+        <div style="text-align:center"><div style="color:#ff4400; font-size:10px;">SHOTS</div><div id="livesVal" class="value">5</div></div>
+    </div>
 
-<script>
-    const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
-    const questionsMap = { "Sardor": "Xotira nima?", "Sohiba": "Ixtiyoriy esda olib qolish nima?", "Sultonbek": "Mnemik jarayon nima?" }; // Qolganlarni qo'shing
+    <div id="resultScreen">
+        <h1 id="resultTitle" style="font-size: 45px; margin:0;"></h1>
+        <p id="resultText" style="font-size: 20px;"></p>
+        <div id="questionBox">
+            <h3 style="color:#ff4400; margin:0; font-size:12px;">DIQQAT SAVOL!</h3>
+            <p id="individualQuestion"></p>
+        </div>
+        <button id="retryBtn" class="btn" style="margin-top:20px;" onclick="restartGame()">QAYTADAN BOSHLASH</button>
+    </div>
+    
+    <canvas id="game"></canvas>
 
-    const bg = new Image(); bg.src = "bg.jpg";
-    const ballImg = new Image(); ballImg.src = "ball.png";
-    const hoopImg = new Image(); hoopImg.src = "hoop_side.png";
-
-    let score = 0, lives = 5, gameStarted = false, isGameOver = false, activeName = "";
-    let hoop = { x: 0, y: 0, w: 0, h: 0 };
-    let ball = { x: 0, y: 0, sx: 0, sy: 0, r: 35, vx: 0, vy: 0, shooting: false, dragged: false };
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        const video = document.getElementById("introVideo");
+        const introUI = document.getElementById("introUI");
         
-        // Savatni ekran kengligining 70% qismiga joylash (Mobil uchun mos)
-        hoop.w = canvas.width * 0.25;
-        hoop.h = hoop.w * 0.75;
-        hoop.x = canvas.width * 0.65; 
-        hoop.y = canvas.height * 0.15;
+        const questionsMap = {
+            "Sardor": "Xotira nima va uning tarkibiy jarayonlari qaysilar?",
+            "Sultonbek": "Mnemik jarayon tushunchasiga nimalar kiradi?",
+            "Diyorbek": "Esda olib qolishning nerv-fiziologik asosi nima?",
+            "Mehroj": "Esda olib qolish jarayonida qanday bog'lanishlar yuzaga keladi?",
+            "E'zoza": "Qulay sharoit deganda nimani tushunasiz?",
+            "Nilufar": "Nima uchun barcha ma'lumotlar esga tushavermaydi?",
+            "Navbahor": "Xotira sifati qanday ko'rsatkichlar bilan baholanadi?",
+            "Gulzoda": "Xotira mustahkamligi qanday aniqlanadi?",
+            "Mohlaroyim": "4ta xotira tiplarini sanab bering.",
+            "Sevinch": "Eng samarali xotira tipi qaysi va nima uchun?",
+            "Sohiba": "Ixtiyoriy esda olib qolish nima?",
+            "Ruxshona": "Ixtiyorsiz esda olib qolish qachon yuz beradi?",
+            "Shahzoda": "Nutq xotirada qanday rol o'ynaydi?"
+        };
 
-        // Koptokni ekran kengligining 20% qismiga joylash
-        ball.sx = canvas.width * 0.2;
-        ball.sy = canvas.height * 0.7;
-        if (!ball.shooting) { ball.x = ball.sx; ball.y = ball.sy; }
-    }
-    window.addEventListener('resize', resize);
-    resize();
+        const bg = new Image(); bg.src = "bg.jpg"; 
+        const ballImg = new Image(); ballImg.src = "ball.png";
+        const hoopImg = new Image(); hoopImg.src = "hoop_side.png";
 
-    document.getElementById("introVideo").onended = () => document.getElementById("introUI").style.display = "flex";
-    setTimeout(() => { if(!gameStarted) document.getElementById("introUI").style.display = "flex"; }, 5000);
+        let score = 0, lives = 5, isGameOver = false, gameStarted = false, activeName = "";
+        const gravity = 0.45;
 
-    function checkPlayer() {
-        activeName = document.getElementById("playerName").value.trim();
-        if (questionsMap[activeName]) {
-            document.getElementById("checkBtn").style.display = "none";
-            document.getElementById("playBtn").style.display = "block";
-        } else { alert("Ism xato!"); }
-    }
+        // Obyektlarni foizda belgilaymiz (Mobil uchun muhim)
+        let hoop = { x: 0, y: 0, w: 0, h: 0, rimY: 0, rimL: 0, rimR: 0 };
+        let ball = { x: 0, y: 0, sx: 0, sy: 0, vx: 0, vy: 0, size: 0, rotation: 0, shooting: false, dragged: false, scored: false };
 
-    function startGame() {
-        document.getElementById("videoContainer").style.display = "none";
-        document.getElementById("scoreboard").style.display = "flex";
-        gameStarted = true;
-        loop();
-    }
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Savat o'lchami va joyi (Mobilga mos)
+            hoop.w = canvas.width > 600 ? 250 : canvas.width * 0.45;
+            hoop.h = hoop.w * 0.77;
+            hoop.x = canvas.width - hoop.w - 20;
+            hoop.y = canvas.height * 0.15;
+            hoop.rimY = hoop.h * 0.3;
+            hoop.rimL = hoop.w * 0.15;
+            hoop.rimR = hoop.w * 0.82;
 
-    function showResult() {
-        isGameOver = true;
-        document.getElementById("resultScreen").style.display = "flex";
-        document.getElementById("resultText").innerText = `${activeName}, ball: ${score}`;
-        if (score < 9) {
-            document.getElementById("resultTitle").innerText = "GAME OVER";
-            document.getElementById("individualQuestion").innerText = questionsMap[activeName];
-            document.getElementById("retryBtn").style.display = "none";
-        } else {
-            document.getElementById("resultTitle").innerText = "WINNER!";
-            document.getElementById("retryBtn").style.display = "block";
+            // Koptok o'lchami va joyi
+            ball.size = hoop.w * 0.35;
+            ball.sx = canvas.width * 0.2;
+            ball.sy = canvas.height * 0.75;
+            if(!ball.shooting) { ball.x = ball.sx; ball.y = ball.sy; }
         }
-    }
+        window.onresize = resize; resize();
 
-    function loop() {
-        if (isGameOver) return;
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        ctx.drawImage(bg, 0,0, canvas.width, canvas.height);
-        ctx.drawImage(hoopImg, hoop.x, hoop.y, hoop.w, hoop.h);
+        video.onended = () => { introUI.style.display = "flex"; };
+        setTimeout(() => { if(!gameStarted) introUI.style.display = "flex"; }, 5000);
 
-        if (ball.shooting) {
-            ball.x += ball.vx; ball.y += ball.vy; ball.vy += 0.4;
-            // Savatga tushish mantiqi
-            if (ball.vy > 0 && ball.y > hoop.y + 20 && ball.x > hoop.x + 20 && ball.x < hoop.x + hoop.w - 20) {
-                score += 3; document.getElementById("scoreVal").innerText = score;
-                ball.shooting = false; ball.x = ball.sx; ball.y = ball.sy;
+        function checkPlayer() {
+            const name = document.getElementById("playerName").value.trim();
+            const found = Object.keys(questionsMap).find(k => k.toLowerCase() === name.toLowerCase());
+            if (found) {
+                activeName = found;
+                const prev = document.getElementById("playerPreview");
+                prev.src = found + ".jpg";
+                prev.onload = () => {
+                    prev.style.display = "block";
+                    document.getElementById("checkBtn").style.display = "none";
+                    document.getElementById("playBtn").style.display = "block";
+                    document.getElementById("tabloImg").src = found + ".jpg";
+                    document.getElementById("tabloName").innerText = found;
+                };
+            } else { alert("Ism ro'yxatda yo'q!"); }
+        }
+
+        function startGame() {
+            document.getElementById("videoContainer").style.display = "none";
+            document.getElementById("scoreboard").style.display = "flex";
+            document.getElementById("playerTablo").style.display = "flex";
+            gameStarted = true;
+        }
+
+        function update() {
+            if (!gameStarted || isGameOver) return;
+            if (ball.shooting) {
+                ball.x += ball.vx; ball.y += ball.vy; ball.vy += gravity; ball.rotation += ball.vx * 0.05;
+                
+                let rY = hoop.y + hoop.rimY, rL = hoop.x + hoop.rimL, rR = hoop.x + hoop.rimR;
+                
+                // Halqaga tegish (Fizika)
+                [rL, rR].forEach(rx => {
+                    let d = Math.hypot(ball.x - rx, ball.y - rY);
+                    if (d < ball.size/2) {
+                        let a = Math.atan2(ball.y - rY, ball.x - rx);
+                        ball.vx = Math.cos(a) * 5; ball.vy = Math.sin(a) * 5;
+                    }
+                });
+
+                // GOL!
+                if (!ball.scored && ball.vy > 0 && ball.x > rL && ball.x < rR && Math.abs(ball.y - rY) < 15) {
+                    score += 3; document.getElementById("scoreVal").innerText = score; ball.scored = true;
+                }
+
+                if (ball.y > canvas.height + 50 || ball.x > canvas.width + 50 || ball.x < -50) {
+                    if (lives <= 1) { lives = 0; document.getElementById("livesVal").innerText = 0; showResult(); } 
+                    else { lives--; document.getElementById("livesVal").innerText = lives; resetBall(); }
+                }
             }
-            if (ball.y > canvas.height || ball.x > canvas.width) {
-                if (lives <= 1) showResult(); else { lives--; document.getElementById("livesVal").innerText = lives; ball.shooting = false; ball.x = ball.sx; ball.y = ball.sy; }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(hoopImg, hoop.x, hoop.y, hoop.w, hoop.h);
+            
+            if (!gameStarted) return;
+
+            // --- MINI BALLS ANIMATION (TRAYEKTORIYA) ---
+            if (ball.dragged) {
+                let tVX = (ball.sx - dragX) * 0.12, tVY = (ball.sy - dragY) * 0.12;
+                let tx = ball.sx, ty = ball.sy, tvy = tVY;
+                for (let i = 0; i < 35; i++) {
+                    if (i % 3 === 0) {
+                        let ms = ball.size * 0.3 * (1 - i/35);
+                        ctx.save(); ctx.globalAlpha = 0.6 - (i/35);
+                        ctx.drawImage(ballImg, tx - ms/2, ty - ms/2, ms, ms);
+                        ctx.restore();
+                    }
+                    tx += tVX * 1.8; ty += tvy * 1.8; tvy += gravity * 1.8;
+                }
+            }
+
+            ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.rotation);
+            ctx.drawImage(ballImg, -ball.size/2, -ball.size/2, ball.size, ball.size);
+            ctx.restore();
+        }
+
+        function showResult() {
+            isGameOver = true;
+            const goals = Math.floor(score / 3);
+            document.getElementById("resultScreen").style.display = "flex";
+            document.getElementById("resultText").innerText = `${activeName}, natijangiz: ${goals} / 5`;
+            const qBox = document.getElementById("questionBox");
+            if (goals >= 3) {
+                document.getElementById("resultTitle").innerText = "🏆 WINNER!";
+                document.getElementById("resultTitle").style.color = "#00ff00";
+                qBox.style.display = "none";
+            } else {
+                document.getElementById("resultTitle").innerText = "🏀 GAME OVER";
+                document.getElementById("resultTitle").style.color = "#ff0000";
+                qBox.style.display = "block";
+                document.getElementById("individualQuestion").innerText = questionsMap[activeName];
+                document.getElementById("retryBtn").style.display = "none";
             }
         }
-        ctx.drawImage(ballImg, ball.x - ball.r, ball.y - ball.r, ball.r*2, ball.r*2);
-        requestAnimationFrame(loop);
-    }
 
-    // Touch boshqaruvi
-    let startX, startY;
-    canvas.addEventListener("touchstart", (e) => {
-        startX = e.touches[0].clientX; startY = e.touches[0].clientY;
-        if (Math.hypot(startX - ball.x, startY - ball.y) < 50) ball.dragged = true;
-    });
-    canvas.addEventListener("touchend", (e) => {
-        if (ball.dragged) {
-            let endX = e.changedTouches[0].clientX; let endY = e.changedTouches[0].clientY;
-            ball.vx = (startX - endX) * 0.12; ball.vy = (startY - endY) * 0.12;
-            ball.shooting = true; ball.dragged = false;
-        }
-    });
-</script>
+        function resetBall() { ball.x = ball.sx; ball.y = ball.sy; ball.vx = 0; ball.vy = 0; ball.shooting = false; ball.dragged = false; ball.scored = false; }
+        function restartGame() { location.reload(); }
+
+        let dragX, dragY;
+        function hS(e) { if (!gameStarted || isGameOver || ball.shooting) return; let p = e.touches ? e.touches[0] : e; if (Math.hypot(p.clientX - ball.x, p.clientY - ball.y) < 100) { ball.dragged = true; dragX = p.clientX; dragY = p.clientY; } }
+        function hM(e) { if (ball.dragged) { let p = e.touches ? e.touches[0] : e; dragX = p.clientX; dragY = p.clientY; } }
+        function hE() { if (ball.dragged) { ball.vx = (ball.sx - dragX) * 0.12; ball.vy = (ball.sy - dragY) * 0.12; ball.shooting = true; ball.dragged = false; } }
+
+        canvas.addEventListener("mousedown", hS); window.addEventListener("mousemove", hM); window.addEventListener("mouseup", hE);
+        canvas.addEventListener("touchstart", hS); window.addEventListener("touchmove", hM); window.addEventListener("touchend", hE);
+
+        function loop() { update(); draw(); requestAnimationFrame(loop); }
+        bg.onload = loop;
+    </script>
 </body>
 </html>
